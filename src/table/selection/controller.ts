@@ -73,7 +73,7 @@ export class TableSelectionController {
     }
   }
 
-  private setSelection(selections: string[]) {
+  public setSelection(selections: string[]) {
     if (isEqual(this._lastSelection, selections)) return;
     this._lastSelection = selections;
     this.slots.selectionChange.emit(selections);

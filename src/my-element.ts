@@ -3,6 +3,9 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { TableCell, TableData } from './table/type';
 import { printTableAst } from './table/utils/print';
 import './table/render';
+import { margeCell, splitCells } from './table/utils/command';
+import { nanoid } from 'nanoid';
+import { getCellsFromId } from './table/utils/cell';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
@@ -61,17 +64,40 @@ export class MyElement extends LitElement {
     return html`<div>${cell.id}</div>`;
   }
 
+  private selections: string[] = [];
+
   render() {
     return html`
       <div style="margin-bottom: 20px">
-        <button @click=${() => console.log('clicked')}>Click me</button>
+        <button
+          @click=${() => {
+            this.tableData = margeCell(
+              this.tableData,
+              getCellsFromId(this.tableData, this.selections)
+            );
+          }}
+        >
+          Merge
+        </button>
+
+        <button
+          @click=${() => {
+            this.tableData = splitCells(
+              this.tableData,
+              getCellsFromId(this.tableData, this.selections),
+              nanoid
+            );
+          }}
+        >
+          Split
+        </button>
       </div>
 
       <table-render
         .data=${this.tableData}
         .contentRender=${this.renderChildren}
         @selection-change=${(e: CustomEvent<string[]>) => {
-          console.log('selection-changed', e.detail);
+          this.selections = e.detail;
         }}
       ></table-render>
     `;

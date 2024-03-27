@@ -67,8 +67,11 @@ export const dataToDomAst = (table: TableData): TableDomAst => {
 
         return ast;
       });
+
     const row: TableRowDomAst = {
-      cells,
+      cells: cells.sort(
+        (a, b) => a.originalCell.pos[0] - b.originalCell.pos[0]
+      ),
     };
     if (table.rows[i].attrs?.isHeader) {
       row.isHeader = true;
