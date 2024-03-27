@@ -1,12 +1,9 @@
 // sum.test.js
 import { describe, expect, it, test } from 'vitest';
-import {
-  createTable,
-  isValidTableData,
-  modelToDomAst,
-} from '../../table/utils/table';
+import { createTable, isValidTableData } from '../../table/utils/table';
 import { printTableAst } from '../../table/utils/print';
 import { CellPosition, TableData, TableDomAst } from '../../table/type';
+import { dataToDomAst } from '../../table/utils/dom';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
@@ -44,29 +41,55 @@ const table: TableData = {
 };
 
 describe('table', () => {
-  it('modelToDomAst', () => {
+  it('dataToDomAst', () => {
     const expectedAst: TableDomAst = {
       rows: [
         {
           isHeader: true,
-          cells: [{ colSpan: 4, id: '1' }],
-        },
-        {
           cells: [
-            { rowSpan: 2, id: '2' },
-            { id: '3' },
-            { id: '4' },
-            { id: '5' },
+            {
+              colSpan: 4,
+              id: '1',
+              originalCell: { id: '1', pos: [0, 0, 4, 1] },
+            },
           ],
         },
         {
-          cells: [{ id: '6' }, { colSpan: 2, id: '7' }],
+          cells: [
+            {
+              rowSpan: 2,
+              id: '2',
+              originalCell: { id: '2', pos: [0, 1, 1, 3] },
+            },
+            { id: '3', originalCell: { id: '3', pos: [1, 1, 2, 2] } },
+            { id: '4', originalCell: { id: '4', pos: [2, 1, 3, 2] } },
+            { id: '5', originalCell: { id: '5', pos: [3, 1, 4, 2] } },
+          ],
+        },
+        {
+          cells: [
+            {
+              id: '6',
+              originalCell: {
+                id: '6',
+                pos: [1, 2, 2, 3],
+              },
+            },
+            {
+              colSpan: 2,
+              id: '7',
+              originalCell: {
+                id: '7',
+                pos: [2, 2, 4, 3],
+              },
+            },
+          ],
         },
       ],
       columns: [{ width: '50px' }, {}, {}, {}],
     };
 
-    const ast = modelToDomAst(table);
+    const ast = dataToDomAst(table);
     expect(ast).toEqual(expectedAst);
   });
 

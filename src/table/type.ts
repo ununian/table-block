@@ -1,3 +1,5 @@
+import { TemplateResult } from 'lit';
+
 export type CellPosition = [x1: number, y1: number, x2: number, y2: number];
 
 export type DefaultCellAttrs = {};
@@ -30,12 +32,23 @@ export interface TableData {
   cells: TableCell[];
 }
 
+// #region Selection
+export type TableSelectionRange = CellPosition;
+export interface TableSelection {
+  range: TableSelectionRange;
+}
+// #endregion
+
 // #region DOM
+export type TableCellRenderFunction = (cell: TableCell) => TemplateResult<1>;
+
 export interface TableCellDomAst {
   id: string;
   attrs?: Record<string, string>;
   colSpan?: number;
   rowSpan?: number;
+
+  originalCell: TableCell;
 }
 
 export interface TableRowDomAst {
@@ -53,4 +66,8 @@ export interface TableDomAst {
   rows: TableRowDomAst[];
   columns: TableColumnDomAst[];
 }
+// #endregion
+
+// #region Command
+export type IDGeneratorFunc = () => string;
 // #endregion

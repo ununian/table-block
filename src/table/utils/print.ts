@@ -1,9 +1,9 @@
 import { SpanningCellConfig, table } from 'table';
 import { TableData } from '../type';
-import { modelToDomAst } from './table';
+import { dataToDomAst } from './dom';
 
 export const printTableAst = (data: TableData, columnWidth = 10): string => {
-  const ast = modelToDomAst(data);
+  const ast = dataToDomAst(data);
 
   const spanningCells: SpanningCellConfig[] = [];
   data.cells.forEach((cell) => {
