@@ -10,7 +10,9 @@
     "test": "vitest"
   },
   "dependencies": {
-    "lit": "^3.1.2"
+    "lit": "^3.1.2",
+    "nanoid": "^5.0.6",
+    "table": "^6.8.2"
   },
   "devDependencies": {
     "happy-dom": "^14.3.8",

@@ -1,6 +1,11 @@
 export type CellPosition = [x1: number, y1: number, x2: number, y2: number];
 
-export interface TableCell<TCellAttrs = any> {
+export type DefaultCellAttrs = {};
+
+export interface TableCell<
+  TCellAttrs extends Record<string, string | number> = DefaultCellAttrs
+> {
+  id: string;
   pos: CellPosition;
   attrs?: Partial<TCellAttrs>;
 }
@@ -27,6 +32,7 @@ export interface TableData {
 
 // #region DOM
 export interface TableCellDomAst {
+  id: string;
   attrs?: Record<string, string>;
   colSpan?: number;
   rowSpan?: number;

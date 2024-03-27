@@ -2,6 +2,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { TableData } from './table/type';
 import { astToDom, modelToDomAst } from './table/utils/table';
+import { printTable } from './table/utils/print';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
@@ -13,28 +14,37 @@ const table: TableData = {
   ],
   cells: [
     {
+      id: '1',
       pos: [0, 0, 4, 1],
     },
     {
+      id: '2',
       pos: [0, 1, 1, 3],
     },
     {
+      id: '3',
       pos: [1, 1, 2, 2],
     },
     {
+      id: '4',
       pos: [2, 1, 3, 2],
     },
     {
+      id: '5',
       pos: [3, 1, 4, 2],
     },
     {
+      id: '6',
       pos: [1, 2, 2, 3],
     },
     {
+      id: '7',
       pos: [2, 2, 4, 3],
     },
   ],
 };
+
+const a = console.log(printTable(table));
 
 /**
  * An example element.
