@@ -1,11 +1,9 @@
-import { LitElement, PropertyValueMap, TemplateResult, css, html } from 'lit';
+import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { TableCellRenderFunction, TableData } from './type';
-import { isTableDataEqual } from './utils/table';
 import { astToDom, dataToDomAst } from './utils/dom';
 import { TableSelectionController } from './selection/controller';
 import { DisposableGroup } from '@blocksuite/global/utils';
-import { s } from 'vitest/dist/reporters-P7C2ytIv.js';
 
 @customElement('table-render')
 export class TableRender extends LitElement {

@@ -84,29 +84,3 @@ export const isCellPositionIntersect = (
     pos1[3] > pos2[1]
   );
 };
-
-export const isTableDataEqual = (
-  table1?: TableData,
-  table2?: TableData
-): boolean => {
-  if (!table1 || !table2) {
-    return false;
-  }
-
-  if (table1.rows.length !== table2.rows.length) {
-    return false;
-  }
-  if (table1.columns.length !== table2.columns.length) {
-    return false;
-  }
-  if (table1.cells.length !== table2.cells.length) {
-    return false;
-  }
-
-  return table1.cells.every((cell, i) => {
-    return (
-      isCellPositionEqual(cell.pos, table2.cells[i].pos) &&
-      cell.attrs === table2.cells[i].attrs
-    );
-  });
-};
