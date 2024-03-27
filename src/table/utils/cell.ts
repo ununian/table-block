@@ -2,6 +2,7 @@ import { isEqual } from '@blocksuite/global/utils';
 import { CellPosition, TableCell, TableData } from '../type';
 
 export const getCellSumRange = (cells: TableCell[]): CellPosition => {
+  if (cells.length === 0) return [0, 0, 0, 0];
   return cells.reduce(
     (acc, cell) => {
       acc[0] = Math.min(acc[0], cell.pos[0]);
