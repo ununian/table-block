@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid';
 import {
   addColumn,
   addRow,
+  goTo,
   margeCell,
   resizeColumn,
   resizeRow,
@@ -85,6 +86,35 @@ export class MyElement extends LitElement {
 
   @state()
   private selections: string[] = [];
+
+  connectedCallback(): void {
+    super.connectedCallback();
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this.selections = [];
+      }
+
+      const map = {
+        ArrowLeft: 'previous',
+        ArrowRight: 'next',
+        ArrowUp: 'up',
+        ArrowDown: 'down',
+      } as const;
+      if (Object.keys(map).includes(e.key)) {
+        const id = goTo(
+          this.tableData,
+          getCellsFromId(this.tableData, this.selections),
+          map[e.key as keyof typeof map]
+        );
+        if (id) {
+          this.selections = [id];
+        } else {
+          this.selections = [];
+        }
+      }
+    });
+  }
 
   render() {
     return html`
