@@ -1,7 +1,14 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { nanoid } from 'nanoid';
-import { addColumn, addRow, margeCell, splitCells } from './table/command';
+import {
+  addColumn,
+  addRow,
+  margeCell,
+  resizeColumn,
+  resizeRow,
+  splitCells,
+} from './table/command';
 import {
   setCellsAttrs,
   toggleColumnHeader,
@@ -22,10 +29,10 @@ import {
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
   columns: [
-    { attrs: { width: '50px' } },
-    { attrs: { width: '100px' } },
-    { attrs: { width: '150px' } },
-    { attrs: { width: '200px' } },
+    { attrs: { width: 50 } },
+    { attrs: { width: 100 } },
+    { attrs: {} },
+    { attrs: {} },
   ],
   cells: [
     {
@@ -255,6 +262,18 @@ export class MyElement extends LitElement {
         .selections=${this.selections}
         @selection-change=${(e: CustomEvent<string[]>) => {
           this.selections = e.detail;
+        }}
+        @resize-column=${(e: CustomEvent<{ index: number; width: number }>) => {
+          const { index, width } = e.detail;
+          this.tableData = resizeColumn(this.tableData, index, width).tableData;
+        }}
+        @resize-row=${(e: CustomEvent<{ index: number; height: number }>) => {
+          const { index, height } = e.detail;
+          this.tableData = resizeRow(this.tableData, index, height).tableData;
+          console.log(
+            '🚀 ~ MyElement ~ render ~ this.tableData:',
+            this.tableData
+          );
         }}
       ></table-render>
 

@@ -6,7 +6,7 @@ import { isValidTableData } from '../../table/utils/table';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
-  columns: [{ attrs: { width: '50px' } }, {}, {}, {}],
+  columns: [{}, {}, {}, {}],
   cells: [
     {
       id: '1',
@@ -49,6 +49,8 @@ describe('table', () => {
             {
               colSpan: 4,
               id: '1',
+              attrs: undefined,
+              inHeader: true,
               originalCell: { id: '1', pos: [0, 0, 4, 1] },
             },
           ],
@@ -57,24 +59,45 @@ describe('table', () => {
           cells: [
             {
               rowSpan: 2,
+              attrs: undefined,
+              inHeader: false,
               id: '2',
               originalCell: { id: '2', pos: [0, 1, 1, 3] },
             },
-            { id: '3', originalCell: { id: '3', pos: [1, 1, 2, 2] } },
-            { id: '4', originalCell: { id: '4', pos: [2, 1, 3, 2] } },
-            { id: '5', originalCell: { id: '5', pos: [3, 1, 4, 2] } },
+            {
+              id: '3',
+              attrs: undefined,
+              inHeader: false,
+              originalCell: { id: '3', pos: [1, 1, 2, 2] },
+            },
+            {
+              id: '4',
+              attrs: undefined,
+              inHeader: false,
+              originalCell: { id: '4', pos: [2, 1, 3, 2] },
+            },
+            {
+              id: '5',
+              attrs: undefined,
+              inHeader: false,
+              originalCell: { id: '5', pos: [3, 1, 4, 2] },
+            },
           ],
         },
         {
           cells: [
             {
               id: '6',
+              attrs: undefined,
+              inHeader: false,
               originalCell: {
                 id: '6',
                 pos: [1, 2, 2, 3],
               },
             },
             {
+              attrs: undefined,
+              inHeader: false,
               colSpan: 2,
               id: '7',
               originalCell: {
@@ -85,7 +108,7 @@ describe('table', () => {
           ],
         },
       ],
-      columns: [{ width: '50px' }, {}, {}, {}],
+      columns: [{ width: 50 }, {}, {}, {}],
     };
 
     const ast = dataToDomAst(table);

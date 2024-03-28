@@ -1,9 +1,10 @@
 import { DisposableGroup, isEqual } from '@blocksuite/global/utils';
-import { LitElement, TemplateResult, css, html } from 'lit';
+import { LitElement, PropertyValueMap, TemplateResult, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { TableSelectionController } from './selection/controller';
 import { TableCellRenderFunction, TableData } from './type';
 import { astToDom, dataToDomAst } from './utils/dom';
+import { TableResizeController } from './resize/controller';
 
 @customElement('table-render')
 export class TableRender extends LitElement {
@@ -18,6 +19,7 @@ export class TableRender extends LitElement {
 
   private readonly disposeGroup = new DisposableGroup();
   private selectionCtrl = new TableSelectionController(this);
+  private resizeCtrl = new TableResizeController(this);
 
   static styles = css`
     :host {
@@ -25,7 +27,7 @@ export class TableRender extends LitElement {
     }
     table {
       border-collapse: collapse;
-      width: 100%;
+      position: relative;
     }
     td {
       border: 1px solid #000;
@@ -46,6 +48,8 @@ export class TableRender extends LitElement {
     this.disposeGroup.add(this.selectionCtrl);
     this.selectionCtrl.initialize();
 
+    this.disposeGroup.add(this.resizeCtrl);
+
     this.disposeGroup.add(
       this.selectionCtrl.slots.selectionChange.on((selectedCellIds) => {
         if (selectedCellIds.length > 0) {
@@ -56,6 +60,25 @@ export class TableRender extends LitElement {
         );
       })
     );
+  }
+
+  protected firstUpdated(
+    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): void {
+    super.firstUpdated(_changedProperties);
+    this.resizeCtrl.initialize();
+  }
+
+  protected shouldUpdate(
+    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): boolean {
+    if (_changedProperties.has('data')) {
+      requestAnimationFrame(() => {
+        this.resizeCtrl.updateColumnPos();
+      });
+    }
+
+    return super.shouldUpdate(_changedProperties);
   }
 
   renderChildren() {
@@ -79,7 +102,7 @@ export class TableRender extends LitElement {
   render(): TemplateResult {
     return html`
       <table>
-        ${this.renderChildren()}
+        ${this.renderChildren()} ${this.resizeCtrl.renderResizeHandle()}
       </table>
     `;
   }

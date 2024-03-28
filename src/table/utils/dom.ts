@@ -1,6 +1,5 @@
 import { TemplateResult, html } from 'lit';
 
-import { ifDefined } from 'lit/directives/if-defined.js';
 import {
   TableCell,
   TableCellDomAst,
@@ -18,17 +17,30 @@ export const astToDom = (
   contentRender: TableCellRenderFunction,
   classFn?: {
     td?: (cell: TableCell) => string;
-  }
+  },
+  totalWidth: number = 750
 ): TemplateResult => {
+  let restWidth = totalWidth;
   return html`
     <colgroup>
-      ${ast.columns.map((column) => {
-        return html`<col width=${ifDefined(column.width)} />`;
+      ${ast.columns.map((column, index) => {
+        const width =
+          column.width ||
+          (index === ast.columns.length - 1
+            ? restWidth
+            : restWidth / ast.columns.length - 1);
+        restWidth -= width;
+        return html`<col width=${width} />`;
       })}
     </colgroup>
     ${ast.rows.map((row) => {
       return html`
-        <tr>
+        <tr
+          style=${styleMap({
+            height: row.height ? `${row.height}px` : undefined,
+          })}
+          ?data-is-header=${row.isHeader}
+        >
           ${row.cells.map((cell) => {
             return html`<td
               class="${classFn?.td ? classFn.td(cell.originalCell) : ''}"
@@ -77,6 +89,7 @@ export const dataToDomAst = (table: TableData): TableDomAst => {
       });
 
     const row: TableRowDomAst = {
+      height: table.rows[i].attrs?.height,
       cells: cells.sort(
         (a, b) => a.originalCell.pos[0] - b.originalCell.pos[0]
       ),

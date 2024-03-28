@@ -17,14 +17,14 @@ export interface TableCell<
 export interface TableRow {
   attrs?: {
     isHeader?: boolean; // 也有横向表格的需求
-    height?: number | string; // 只有调整过的才记录
+    height?: number; // 只有调整过的才记录
   };
 }
 
 export interface TableColumn {
   attrs?: {
     isHeader?: boolean;
-    width?: number | string; // 只有调整过的才记录
+    width?: number; // 只有调整过的才记录
   };
 }
 
@@ -62,7 +62,7 @@ export interface TableRowDomAst {
 }
 
 export interface TableColumnDomAst {
-  width?: number | string;
+  width?: number;
 }
 
 export interface TableDomAst {
