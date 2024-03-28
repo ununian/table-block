@@ -10,6 +10,8 @@ import {
   TableDomAst,
   TableRowDomAst,
 } from '../type';
+import { styleMap } from 'lit/directives/style-map.js';
+import { isCellInHeader } from './cell';
 
 export const astToDom = (
   ast: TableDomAst,
@@ -31,6 +33,10 @@ export const astToDom = (
             return html`<td
               class="${classFn?.td ? classFn.td(cell.originalCell) : ''}"
               data-cell-id=${cell.id}
+              ?data-in-header=${cell.inHeader}
+              style=${styleMap({
+                backgroundColor: cell.attrs?.background,
+              })}
               colspan=${cell.colSpan || 1}
               rowspan=${cell.rowSpan || 1}
             >
@@ -56,6 +62,8 @@ export const dataToDomAst = (table: TableData): TableDomAst => {
         const ast: TableCellDomAst = {
           id: cell.id,
           originalCell: cell,
+          attrs: cell.attrs,
+          inHeader: isCellInHeader(table, cell),
         };
         if (colSpan > 1) {
           ast.colSpan = colSpan;

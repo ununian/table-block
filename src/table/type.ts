@@ -2,7 +2,9 @@ import { TemplateResult } from 'lit';
 
 export type CellPosition = [x1: number, y1: number, x2: number, y2: number];
 
-export type DefaultCellAttrs = {};
+export type DefaultCellAttrs = {
+  background: string;
+};
 
 export interface TableCell<
   TCellAttrs extends Record<string, string | number> = DefaultCellAttrs
@@ -47,6 +49,8 @@ export interface TableCellDomAst {
   attrs?: Record<string, string>;
   colSpan?: number;
   rowSpan?: number;
+
+  inHeader?: boolean;
 
   originalCell: TableCell;
 }

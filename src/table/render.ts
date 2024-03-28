@@ -3,7 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { TableCellRenderFunction, TableData } from './type';
 import { astToDom, dataToDomAst } from './utils/dom';
 import { TableSelectionController } from './selection/controller';
-import { DisposableGroup } from '@blocksuite/global/utils';
+import { DisposableGroup, isEqual } from '@blocksuite/global/utils';
 
 @customElement('table-render')
 export class TableRender extends LitElement {
@@ -13,8 +13,8 @@ export class TableRender extends LitElement {
   @property({ attribute: false })
   contentRender?: TableCellRenderFunction;
 
-  @state()
-  private selectedCellIds: string[] = [];
+  @property({ type: Array, hasChanged: (a, b) => !isEqual(a, b) })
+  selections: string[] = [];
 
   private readonly disposeGroup = new DisposableGroup();
   private selectionCtrl = new TableSelectionController(this);
@@ -30,6 +30,10 @@ export class TableRender extends LitElement {
     td {
       border: 1px solid #000;
       padding: 8px;
+
+      &[data-in-header] {
+        background-color: #16cd93;
+      }
 
       &.is-selected-cell {
         background-color: #f0f0f0;
@@ -47,7 +51,6 @@ export class TableRender extends LitElement {
         if (selectedCellIds.length > 0) {
           window.getSelection()?.removeAllRanges();
         }
-        this.selectedCellIds = selectedCellIds;
         this.dispatchEvent(
           new CustomEvent('selection-change', { detail: selectedCellIds })
         );
@@ -63,7 +66,7 @@ export class TableRender extends LitElement {
     const ast = dataToDomAst(this.data);
     const result = astToDom(ast, this.contentRender, {
       td: (cell) =>
-        this.selectedCellIds.includes(cell.id) ? 'is-selected-cell' : '',
+        this.selections.includes(cell.id) ? 'is-selected-cell' : '',
     });
     return result;
   }

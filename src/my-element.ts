@@ -5,12 +5,25 @@ import { printTable } from './table/utils/print';
 import './table/render';
 import { addColumn, addRow, margeCell, splitCells } from './table/command';
 import { nanoid } from 'nanoid';
-import { getCellsFromId } from './table/utils/cell';
+import {
+  getCellsFromId,
+  getCellsIncludeRange,
+  getCellsInsideRange,
+  getCellsMatchRange,
+} from './table/utils/cell';
 import {
   getVisibleColumnIndex,
   getVisibleRowIndex,
   isValidTableData,
 } from './table/utils/table';
+import {
+  setCellsAttrs,
+  toggleColumnHeader,
+  toggleRowHeader,
+} from './table/command/attrs';
+import { styleMap } from 'lit/directives/style-map.js';
+import { getColumnCells, getRowCells } from './table/command/selection';
+import { removeColumn, removeRow } from './table/command/remove';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
@@ -69,6 +82,7 @@ export class MyElement extends LitElement {
     return html`<div>${cell.id}</div>`;
   }
 
+  @state()
   private selections: string[] = [];
 
   render() {
@@ -127,11 +141,124 @@ export class MyElement extends LitElement {
         >
           Add Row At 2
         </button>
+
+        <button
+          @click=${() => {
+            this.tableData = toggleColumnHeader(
+              toggleRowHeader(this.tableData).tableData
+            ).tableData;
+          }}
+        >
+          Toggle Column Row Header
+        </button>
+
+        <button
+          @click=${() => {
+            const result = setCellsAttrs(
+              this.tableData,
+              getCellsFromId(this.tableData, this.selections),
+              {
+                background: 'red',
+              }
+            );
+
+            this.tableData = result.tableData;
+          }}
+        >
+          Set Selection Cell Background
+        </button>
+      </div>
+
+      <div style="margin-bottom: 20px">
+        Selection
+        <button
+          @click=${() => {
+            const cells = getColumnCells(this.tableData, 1, 'inside');
+            this.selections = cells.map((cell) => cell.id);
+          }}
+        >
+          Column 1 Inside
+        </button>
+
+        <button
+          @click=${() => {
+            const cells = getColumnCells(this.tableData, 1, 'include');
+            this.selections = cells.map((cell) => cell.id);
+          }}
+        >
+          Column 1 Include
+        </button>
+
+        <button
+          @click=${() => {
+            const cells = getColumnCells(this.tableData, 1, 'match');
+            this.selections = cells.map((cell) => cell.id);
+          }}
+        >
+          Column 1 Match
+        </button>
+
+        <button
+          @click=${() => {
+            const cells = getRowCells(this.tableData, 1, 'inside');
+            this.selections = cells.map((cell) => cell.id);
+          }}
+        >
+          Row 1 Inside
+        </button>
+
+        <button
+          @click=${() => {
+            const cells = getRowCells(this.tableData, 1, 'include');
+            this.selections = cells.map((cell) => cell.id);
+          }}
+        >
+          Row 1 Include
+        </button>
+
+        <button
+          @click=${() => {
+            const cells = getRowCells(this.tableData, 1, 'match');
+            this.selections = cells.map((cell) => cell.id);
+          }}
+        >
+          Row 1 Match
+        </button>
+      </div>
+
+      <div style="margin-bottom: 20px">
+        Remove
+        <button
+          @click=${() => {
+            const result = removeColumn(
+              this.tableData,
+              getVisibleColumnIndex(this.tableData, 1)
+            );
+
+            this.tableData = result.tableData;
+          }}
+        >
+          Column 1
+        </button>
+
+        <button
+          @click=${() => {
+            const result = removeRow(
+              this.tableData,
+              getVisibleRowIndex(this.tableData, 1)
+            );
+
+            this.tableData = result.tableData;
+          }}
+        >
+          Row 1
+        </button>
       </div>
 
       <table-render
         .data=${this.tableData}
         .contentRender=${this.renderChildren}
+        .selections=${this.selections}
         @selection-change=${(e: CustomEvent<string[]>) => {
           this.selections = e.detail;
         }}

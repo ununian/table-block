@@ -171,3 +171,11 @@ export const getCellIntersectColumn = (
     return cell.pos[0] <= colIndex && cell.pos[2] > colIndex;
   });
 };
+
+export const isCellInHeader = (data: TableData, cell: TableCell): boolean => {
+  return (
+    data.rows[cell.pos[1]].attrs?.isHeader ||
+    data.columns[cell.pos[0]].attrs?.isHeader ||
+    false
+  );
+};
