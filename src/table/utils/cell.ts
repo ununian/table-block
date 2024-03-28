@@ -118,3 +118,56 @@ export const getCellsFromId = (
 ): TableCell[] => {
   return data?.cells.filter((cell) => ids.includes(cell.id)) || [];
 };
+
+export const isCellPositionEqual = (
+  pos1: CellPosition,
+  pos2: CellPosition
+): boolean => {
+  return pos1.every((p, i) => p === pos2[i]);
+};
+
+// 判断两个 cell 是否有交集， 包含或者相等都算有交集
+export const isPosIntersect = (
+  pos1: CellPosition,
+  pos2: CellPosition
+): boolean => {
+  const [x1A, y1A, x2A, y2A] = pos1;
+  const [x1B, y1B, x2B, y2B] = pos2;
+  // 检查一个矩形是否在另一个矩形的左边或右边
+  if (x1A >= x2B || x1B >= x2A) {
+    return false;
+  }
+  // 检查一个矩形是否在另一个矩形的上面或下面
+  if (y1A >= y2B || y1B >= y2A) {
+    return false;
+  }
+  return true;
+};
+
+// 判断一个 cell 是否包含另一个 cell
+export const isPosContainPos = (
+  outer: CellPosition,
+  inner: CellPosition
+): boolean => {
+  return (
+    outer[0] <= inner[0] &&
+    outer[1] <= inner[1] &&
+    outer[2] >= inner[2] &&
+    outer[3] >= inner[3]
+  );
+};
+
+export const getCellIntersectRow = (cells: TableCell[], rowIndex: number) => {
+  return cells.filter((cell) => {
+    return cell.pos[1] <= rowIndex && cell.pos[3] > rowIndex;
+  });
+};
+
+export const getCellIntersectColumn = (
+  cells: TableCell[],
+  colIndex: number
+) => {
+  return cells.filter((cell) => {
+    return cell.pos[0] <= colIndex && cell.pos[2] > colIndex;
+  });
+};

@@ -1,4 +1,4 @@
-import { TableData } from '../type';
+import { CellPosition, TableData } from '../type';
 
 import { nanoid } from 'nanoid';
 
@@ -66,21 +66,33 @@ export const isValidTableData = (table: TableData): boolean => {
   return baseValid && cellValid;
 };
 
-export const isCellPositionEqual = (
-  pos1: number[],
-  pos2: number[]
-): boolean => {
-  return pos1.every((p, i) => p === pos2[i]);
+// 获取用户可见的列，如果当前列不是一个 Cell 的边，则认为是不可见的
+export const getVisibleColumnIndex = (
+  table: TableData,
+  index: number
+): number => {
+  let newIndex = index;
+  for (let i = index; i < table.columns.length; i++) {
+    newIndex = i;
+
+    if (table.cells.some((cell) => cell.pos[0] === i)) {
+      break;
+    }
+  }
+
+  return newIndex;
 };
 
-export const isCellPositionIntersect = (
-  pos1: number[],
-  pos2: number[]
-): boolean => {
-  return (
-    pos1[0] < pos2[2] &&
-    pos1[2] > pos2[0] &&
-    pos1[1] < pos2[3] &&
-    pos1[3] > pos2[1]
-  );
+// 获取用户可见的行，如果当前行不是一个 Cell 的边，则认为是不可见的
+export const getVisibleRowIndex = (table: TableData, index: number): number => {
+  let newIndex = index;
+
+  for (let i = index; i < table.rows.length; i++) {
+    newIndex = i;
+    if (table.cells.some((cell) => cell.pos[1] === i)) {
+      break;
+    }
+  }
+
+  return newIndex;
 };

@@ -75,6 +75,7 @@ export class TableSelectionController {
 
   public setSelection(selections: string[]) {
     if (isEqual(this._lastSelection, selections)) return;
+
     this._lastSelection = selections;
     this.slots.selectionChange.emit(selections);
   }
@@ -84,6 +85,7 @@ export class TableSelectionController {
     if (!this._isPointerDown) return;
 
     const [targetCell, isInPadding] = this.getPointCell(e.clientX, e.clientY);
+
     if (!targetCell) return;
 
     const cellId = targetCell.getAttribute('data-cell-id')!;

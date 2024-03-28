@@ -70,4 +70,12 @@ export interface TableDomAst {
 
 // #region Command
 export type IDGeneratorFunc = () => string;
+
+export interface TableChangedResult {
+  tableData: TableData;
+
+  removedCells: TableCell[];
+  addedCells: TableCell[];
+  changedCells: TableCell[];
+}
 // #endregion

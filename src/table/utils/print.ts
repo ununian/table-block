@@ -2,7 +2,7 @@ import { SpanningCellConfig, table } from 'table';
 import { TableData } from '../type';
 import { dataToDomAst } from './dom';
 
-export const printTableAst = (data: TableData, columnWidth = 10): string => {
+export const printTable = (data: TableData, columnWidth = 10): string => {
   const ast = dataToDomAst(data);
 
   const spanningCells: SpanningCellConfig[] = [];
@@ -28,7 +28,7 @@ export const printTableAst = (data: TableData, columnWidth = 10): string => {
   const rowData = ast.rows.map((row) => {
     return row.cells.flatMap((cell) => {
       if (cell.colSpan) {
-        return [cell.id, ...Array(cell.colSpan - 1).fill('rowData')];
+        return [cell.id, ...Array(cell.colSpan - 1).fill('')];
       }
       return [cell.id];
     });
@@ -38,11 +38,21 @@ export const printTableAst = (data: TableData, columnWidth = 10): string => {
     row.cells.forEach((cell, cellIndex) => {
       if (cell.rowSpan) {
         for (let i = 1; i < cell.rowSpan; i++) {
-          rowData[rowIndex + i] = [
-            ...rowData[rowIndex + i].slice(0, cellIndex),
-            '',
-            ...rowData[rowIndex + i].slice(cellIndex),
-          ];
+          if (cell.colSpan && cell.colSpan > 1) {
+            for (let j = 0; j < cell.colSpan; j++) {
+              rowData[rowIndex + i] = [
+                ...rowData[rowIndex + i].slice(0, cellIndex + j),
+                '',
+                ...rowData[rowIndex + i].slice(cellIndex + j),
+              ];
+            }
+          } else {
+            rowData[rowIndex + i] = [
+              ...rowData[rowIndex + i].slice(0, cellIndex),
+              '',
+              ...rowData[rowIndex + i].slice(cellIndex),
+            ];
+          }
         }
       }
     });

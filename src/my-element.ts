@@ -1,11 +1,16 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { TableCell, TableData } from './table/type';
-import { printTableAst } from './table/utils/print';
+import { printTable } from './table/utils/print';
 import './table/render';
-import { margeCell, splitCells } from './table/utils/command';
+import { addColumn, addRow, margeCell, splitCells } from './table/command';
 import { nanoid } from 'nanoid';
 import { getCellsFromId } from './table/utils/cell';
+import {
+  getVisibleColumnIndex,
+  getVisibleRowIndex,
+  isValidTableData,
+} from './table/utils/table';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
@@ -47,7 +52,7 @@ const table: TableData = {
   ],
 };
 
-const a = console.log(printTableAst(table, 2));
+const a = console.log(printTable(table, 2));
 
 /**
  * An example element.
@@ -71,10 +76,11 @@ export class MyElement extends LitElement {
       <div style="margin-bottom: 20px">
         <button
           @click=${() => {
-            this.tableData = margeCell(
+            const result = margeCell(
               this.tableData,
               getCellsFromId(this.tableData, this.selections)
             );
+            this.tableData = result.tableData;
           }}
         >
           Merge
@@ -82,14 +88,44 @@ export class MyElement extends LitElement {
 
         <button
           @click=${() => {
-            this.tableData = splitCells(
+            const result = splitCells(
               this.tableData,
               getCellsFromId(this.tableData, this.selections),
               nanoid
             );
+
+            this.tableData = result.tableData;
           }}
         >
           Split
+        </button>
+
+        <button
+          @click=${() => {
+            const result = addColumn(
+              this.tableData,
+              getVisibleColumnIndex(this.tableData, 1),
+              nanoid
+            );
+
+            this.tableData = result.tableData;
+          }}
+        >
+          Add Column At 1
+        </button>
+
+        <button
+          @click=${() => {
+            const result = addRow(
+              this.tableData,
+              getVisibleRowIndex(this.tableData, 2),
+              nanoid
+            );
+
+            this.tableData = result.tableData;
+          }}
+        >
+          Add Row At 2
         </button>
       </div>
 
@@ -100,6 +136,10 @@ export class MyElement extends LitElement {
           this.selections = e.detail;
         }}
       ></table-render>
+
+      <div style="margin-top: 10px">
+        Is Valid: ${isValidTableData(this.tableData)}
+      </div>
     `;
   }
 
@@ -112,9 +152,9 @@ export class MyElement extends LitElement {
     }
 
     button {
-      border-radius: 8px;
+      border-radius: 4px;
       border: 1px solid transparent;
-      padding: 0.6em 1.2em;
+      padding: 4px 12px;
       font-size: 1em;
       font-weight: 500;
       font-family: inherit;
