@@ -59,7 +59,7 @@ export const printTable = (data: TableData, columnWidth = 10): string => {
   });
 
   return table(rowData, {
-    columns: ast.columns.map((col) => ({ width: columnWidth })),
+    columns: ast.columns.map((_col) => ({ width: columnWidth })),
     spanningCells: spanningCells,
   });
 };

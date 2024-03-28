@@ -1,15 +1,5 @@
-import {
-  CellPosition,
-  TableCell,
-  TableChangedResult,
-  TableData,
-} from '../type';
-import {
-  getCellSumRange,
-  getCellsIncludeRange,
-  getCellsInsideRange,
-  getCellsMatchRange,
-} from '../utils/cell';
+import { TableCell, TableChangedResult, TableData } from '../type';
+import { getCellSumRange, getCellsMatchRange } from '../utils/cell';
 import { toResult } from '../utils/result';
 
 /**

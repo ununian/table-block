@@ -2,18 +2,16 @@ import {
   CellPosition,
   IDGeneratorFunc,
   TableCell,
-  TableData,
   TableChangedResult,
+  TableData,
 } from '../type';
 import {
   getCellIntersectColumn,
   getCellIntersectRow,
-  getCellSumRange,
-  getCellsMatchRange,
   isPosIntersect,
 } from '../utils/cell';
 import { printTable } from '../utils/print';
-import { mergeResult, toResult } from '../utils/result';
+import { toResult } from '../utils/result';
 
 export const addColumn = (
   tableData: TableData,

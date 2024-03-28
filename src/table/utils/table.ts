@@ -1,4 +1,4 @@
-import { CellPosition, TableData } from '../type';
+import { TableData } from '../type';
 
 import { nanoid } from 'nanoid';
 

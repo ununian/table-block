@@ -1,29 +1,23 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import { TableCell, TableData } from './table/type';
-import { printTable } from './table/utils/print';
-import './table/render';
-import { addColumn, addRow, margeCell, splitCells } from './table/command';
+import { customElement, state } from 'lit/decorators.js';
 import { nanoid } from 'nanoid';
-import {
-  getCellsFromId,
-  getCellsIncludeRange,
-  getCellsInsideRange,
-  getCellsMatchRange,
-} from './table/utils/cell';
-import {
-  getVisibleColumnIndex,
-  getVisibleRowIndex,
-  isValidTableData,
-} from './table/utils/table';
+import { addColumn, addRow, margeCell, splitCells } from './table/command';
 import {
   setCellsAttrs,
   toggleColumnHeader,
   toggleRowHeader,
 } from './table/command/attrs';
-import { styleMap } from 'lit/directives/style-map.js';
-import { getColumnCells, getRowCells } from './table/command/selection';
 import { removeColumn, removeRow } from './table/command/remove';
+import { getColumnCells, getRowCells } from './table/command/selection';
+import './table/render';
+import { TableCell, TableData } from './table/type';
+import { getCellsFromId } from './table/utils/cell';
+import { printTable } from './table/utils/print';
+import {
+  getVisibleColumnIndex,
+  getVisibleRowIndex,
+  isValidTableData,
+} from './table/utils/table';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
@@ -65,7 +59,7 @@ const table: TableData = {
   ],
 };
 
-const a = console.log(printTable(table, 2));
+console.log(printTable(table, 2));
 
 /**
  * An example element.

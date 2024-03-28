@@ -1,12 +1,12 @@
 // sum.test.js
-import { describe, expect, it, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
+import { TableData } from '../../table/type';
 import {
-  getCellsInsideRange,
   getCellsIncludeRange,
+  getCellsInsideRange,
   getCellsMatchRange,
 } from '../../table/utils/cell';
-import { TableData } from '../../table/type';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],

@@ -1,10 +1,8 @@
-import { TableRender } from '../render';
 import { DisposableGroup, Slot, isEqual } from '@blocksuite/global/utils';
+import { TableRender } from '../render';
 import {
   getCellSumRange,
   getCellsFromId,
-  getCellsIncludeRange,
-  getCellsInsideRange,
   getCellsMatchRange,
 } from '../utils/cell';
 

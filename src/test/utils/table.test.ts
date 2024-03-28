@@ -1,9 +1,8 @@
 // sum.test.js
-import { describe, expect, it, test } from 'vitest';
-import { createTable, isValidTableData } from '../../table/utils/table';
-import { printTable } from '../../table/utils/print';
+import { describe, expect, it } from 'vitest';
 import { CellPosition, TableData, TableDomAst } from '../../table/type';
 import { dataToDomAst } from '../../table/utils/dom';
+import { isValidTableData } from '../../table/utils/table';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],

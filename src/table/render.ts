@@ -1,9 +1,9 @@
+import { DisposableGroup, isEqual } from '@blocksuite/global/utils';
 import { LitElement, TemplateResult, css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
+import { TableSelectionController } from './selection/controller';
 import { TableCellRenderFunction, TableData } from './type';
 import { astToDom, dataToDomAst } from './utils/dom';
-import { TableSelectionController } from './selection/controller';
-import { DisposableGroup, isEqual } from '@blocksuite/global/utils';
 
 @customElement('table-render')
 export class TableRender extends LitElement {
