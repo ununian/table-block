@@ -1,8 +1,7 @@
-import { DisposableGroup, isEqual } from '@blocksuite/global/utils';
+import { DisposableGroup } from '@blocksuite/global/utils';
 import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
-import { TableRender } from '../render';
 import { TableResizeController } from './controller';
 
 @customElement('table-resize-handler')

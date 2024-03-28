@@ -10,7 +10,7 @@ import {
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
-  columns: [{ attrs: { width: '50px' } }, {}, {}, {}],
+  columns: [{ attrs: { width: 50 } }, {}, {}, {}],
   cells: [
     {
       id: '1',
