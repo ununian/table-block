@@ -1,8 +1,9 @@
-import { TableCell, TableData } from '../type';
+import { CellPosition, TableCell, TableData } from '../type';
 import {
   getCellsIncludeRange,
   getCellsInsideRange,
   getCellsMatchRange,
+  isCellsEqual,
 } from '../utils/cell';
 
 export const getColumnCells = (
@@ -64,4 +65,37 @@ export const getRowCells = (
     tableData.columns.length + 1,
     rowIndex + 1,
   ]);
+};
+
+export const isSelectionWholeTable = (
+  tableData: TableData,
+  range: CellPosition
+) => {
+  const [x1, y1, x2, y2] = range;
+  return (
+    x1 === 0 &&
+    y1 === 0 &&
+    x2 === tableData.columns.length &&
+    y2 === tableData.rows.length
+  );
+};
+
+export const getIndexIfCellSameColumn = (
+  tableData: TableData,
+  cells: TableCell[],
+  mode: 'include' | 'inside' | 'match' = 'inside'
+) => {
+  const columnIndex = cells[0].pos[0];
+  const columnCells = getColumnCells(tableData, columnIndex, mode);
+  return isCellsEqual(columnCells, cells) ? columnIndex : -1;
+};
+
+export const getIndexIfCellSameRow = (
+  tableData: TableData,
+  cells: TableCell[],
+  mode: 'include' | 'inside' | 'match' = 'inside'
+) => {
+  const rowIndex = cells[0].pos[1];
+  const rowCells = getRowCells(tableData, rowIndex, mode);
+  return isCellsEqual(rowCells, cells) ? rowIndex : -1;
 };

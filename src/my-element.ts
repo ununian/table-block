@@ -8,12 +8,18 @@ import {
   toggleRowHeader,
 } from './table/command/attrs';
 import { removeColumn, removeRow } from './table/command/remove';
-import { getColumnCells, getRowCells } from './table/command/selection';
+import {
+  getColumnCells,
+  getIndexIfCellSameColumn,
+  getIndexIfCellSameRow,
+  getRowCells,
+  isSelectionWholeTable,
+} from './table/command/selection';
 import './table/component';
 import { TableComponent } from './table/component';
 import './table/render';
 import { TableCell, TableData } from './table/type';
-import { getCellsFromId } from './table/utils/cell';
+import { getCellSumRange, getCellsFromId } from './table/utils/cell';
 import { printTable } from './table/utils/print';
 import {
   createTable,
@@ -87,6 +93,25 @@ export class MyElement extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
+  }
+
+  getSelectionRowOrColumnIndex(type: 'row' | 'column') {
+    if (this.selections.length === 0) {
+      return '';
+    }
+
+    const mode = ['inside', 'include', 'match'] as const;
+    const cells = getCellsFromId(this.tableData, this.selections);
+
+    for (const m of mode) {
+      const index =
+        type === 'row'
+          ? getIndexIfCellSameRow(this.tableData, cells, m)
+          : getIndexIfCellSameColumn(this.tableData, cells, m);
+      if (index !== -1) {
+        return `选中了整${type === 'row' ? '行' : '列'}: ${index}，模式: ${m}`;
+      }
+    }
   }
 
   render() {
@@ -280,7 +305,15 @@ export class MyElement extends LitElement {
       ></table-component>
 
       <div style="margin-top: 10px">
-        Is Valid: ${isValidTableData(this.tableData)}
+        Is Valid: ${isValidTableData(this.tableData)} <br />
+        ${this.getSelectionRowOrColumnIndex('row')} <br />
+        ${this.getSelectionRowOrColumnIndex('column')} <br />
+        ${isSelectionWholeTable(
+          this.tableData,
+          getCellSumRange(getCellsFromId(this.tableData, this.selections))
+        )
+          ? '选中了整个表格'
+          : ''} <br />
       </div>
     `;
   }

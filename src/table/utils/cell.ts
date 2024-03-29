@@ -179,3 +179,17 @@ export const isCellInHeader = (data: TableData, cell: TableCell): boolean => {
     false
   );
 };
+
+export const isCellEqual = (cell1: TableCell, cell2: TableCell): boolean => {
+  return cell1.id === cell2.id;
+};
+
+export const isCellsEqual = (
+  cells1: TableCell[],
+  cells2: TableCell[]
+): boolean => {
+  if (cells1.length !== cells2.length) return false;
+  return cells1.every((cell1) => {
+    return cells2.some((cell2) => isCellEqual(cell1, cell2));
+  });
+};
