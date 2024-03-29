@@ -1,6 +1,7 @@
 import { TemplateResult, html } from 'lit';
 
 import {
+  CellPosition,
   TableCell,
   TableCellDomAst,
   TableCellRenderFunction,
@@ -10,7 +11,8 @@ import {
   TableRowDomAst,
 } from '../type';
 import { styleMap } from 'lit/directives/style-map.js';
-import { isCellInHeader } from './cell';
+import { getCellSumRange, isCellInHeader } from './cell';
+import { TableRender } from '../render';
 
 export const astToDom = (
   ast: TableDomAst,
@@ -109,4 +111,49 @@ export const dataToDomAst = (table: TableData): TableDomAst => {
   });
 
   return result;
+};
+
+export const rangeToDomRect = (
+  range: CellPosition,
+  tableRender: TableRender,
+  mode: 'absolute' | 'relative' = 'absolute'
+): DOMRect => {
+  const columnPos = Array.from<HTMLTableColElement>(
+    tableRender.shadowRoot!.querySelectorAll('colgroup col')
+  ).reduce((acc, col) => {
+    const rect = col.getBoundingClientRect();
+    if (acc.length === 0) {
+      acc.push(mode === 'relative' ? 0 : rect.left);
+    }
+    acc.push(rect.width + (acc[acc.length - 1] || 0));
+    return acc;
+  }, [] as number[]);
+
+  const rowPos = Array.from<HTMLTableRowElement>(
+    tableRender.shadowRoot!.querySelectorAll('tr')
+  ).reduce((acc, row) => {
+    const rect = row.getBoundingClientRect();
+    if (acc.length === 0) {
+      acc.push(mode === 'relative' ? 0 : rect.top);
+    }
+    acc.push(rect.height + (acc[acc.length - 1] || 0));
+    return acc;
+  }, [] as number[]);
+
+  const [x1, y1, x2, y2] = range;
+
+  return new DOMRect(
+    columnPos[x1],
+    rowPos[y1],
+    columnPos[x2] - columnPos[x1],
+    rowPos[y2] - rowPos[y1]
+  );
+};
+
+export const cellsToDomRect = (
+  cells: TableCell[],
+  tableRender: TableRender,
+  mode: 'absolute' | 'relative' = 'absolute'
+) => {
+  return rangeToDomRect(getCellSumRange(cells), tableRender, mode);
 };

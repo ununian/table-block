@@ -1,5 +1,5 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, query, state } from 'lit/decorators.js';
 import { nanoid } from 'nanoid';
 import {
   addColumn,
@@ -26,6 +26,8 @@ import {
   getVisibleRowIndex,
   isValidTableData,
 } from './table/utils/table';
+import { cellsToDomRect } from './table/utils/dom';
+import { TableRender } from './table/render';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
@@ -86,6 +88,13 @@ export class MyElement extends LitElement {
 
   @state()
   private selections: string[] = [];
+
+  @query('table-render')
+  private tableRender!: TableRender;
+
+  formatDomRect(rect: DOMRect): string {
+    return `[x: ${rect.x}, y: ${rect.y}, w: ${rect.width}, h: ${rect.height}]`;
+  }
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -296,19 +305,38 @@ export class MyElement extends LitElement {
         @resize-column=${(e: CustomEvent<{ index: number; width: number }>) => {
           const { index, width } = e.detail;
           this.tableData = resizeColumn(this.tableData, index, width).tableData;
+          requestAnimationFrame(() => {
+            this.requestUpdate();
+          });
         }}
         @resize-row=${(e: CustomEvent<{ index: number; height: number }>) => {
           const { index, height } = e.detail;
           this.tableData = resizeRow(this.tableData, index, height).tableData;
-          console.log(
-            '🚀 ~ MyElement ~ render ~ this.tableData:',
-            this.tableData
-          );
+          requestAnimationFrame(() => {
+            this.requestUpdate();
+          });
         }}
       ></table-render>
 
       <div style="margin-top: 10px">
-        Is Valid: ${isValidTableData(this.tableData)}
+        Is Valid: ${isValidTableData(this.tableData)} ||| Selection Dom:
+        ${this.selections.length
+          ? this.formatDomRect(
+              cellsToDomRect(
+                getCellsFromId(this.tableData, this.selections),
+                this.tableRender,
+                'absolute'
+              )
+            ) +
+            '  ' +
+            this.formatDomRect(
+              cellsToDomRect(
+                getCellsFromId(this.tableData, this.selections),
+                this.tableRender,
+                'relative'
+              )
+            )
+          : 'None'}
       </div>
     `;
   }
