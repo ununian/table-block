@@ -1,6 +1,6 @@
 import { DisposableGroup } from '@blocksuite/global/utils';
 import { LitElement, TemplateResult, css, html } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { TableResizeController } from './controller';
 
@@ -42,9 +42,6 @@ export class TableResizeHandler extends LitElement {
 
   @state()
   private translateY = 0;
-
-  @query('table-resize-handler')
-  private handler!: HTMLElement;
 
   connectedCallback() {
     super.connectedCallback();
