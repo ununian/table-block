@@ -28,6 +28,8 @@ import {
 } from './table/utils/table';
 import { cellsToDomRect } from './table/utils/dom';
 import { TableRender } from './table/render';
+import './table/component';
+import { TableComponent } from './table/component';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
@@ -89,40 +91,11 @@ export class MyElement extends LitElement {
   @state()
   private selections: string[] = [];
 
-  @query('table-render')
-  private tableRender!: TableRender;
-
-  formatDomRect(rect: DOMRect): string {
-    return `[x: ${rect.x}, y: ${rect.y}, w: ${rect.width}, h: ${rect.height}]`;
-  }
+  @query('table-component')
+  private tableComponent!: TableComponent;
 
   connectedCallback(): void {
     super.connectedCallback();
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        this.selections = [];
-      }
-
-      const map = {
-        ArrowLeft: 'previous',
-        ArrowRight: 'next',
-        ArrowUp: 'up',
-        ArrowDown: 'down',
-      } as const;
-      if (Object.keys(map).includes(e.key)) {
-        const id = goTo(
-          this.tableData,
-          getCellsFromId(this.tableData, this.selections),
-          map[e.key as keyof typeof map]
-        );
-        if (id) {
-          this.selections = [id];
-        } else {
-          this.selections = [];
-        }
-      }
-    });
   }
 
   render() {
@@ -214,7 +187,7 @@ export class MyElement extends LitElement {
         <button
           @click=${() => {
             const cells = getColumnCells(this.tableData, 1, 'inside');
-            this.selections = cells.map((cell) => cell.id);
+            this.tableComponent.updateSelections(cells.map((cell) => cell.id));
           }}
         >
           Column 1 Inside
@@ -223,7 +196,7 @@ export class MyElement extends LitElement {
         <button
           @click=${() => {
             const cells = getColumnCells(this.tableData, 1, 'include');
-            this.selections = cells.map((cell) => cell.id);
+            this.tableComponent.updateSelections(cells.map((cell) => cell.id));
           }}
         >
           Column 1 Include
@@ -232,7 +205,7 @@ export class MyElement extends LitElement {
         <button
           @click=${() => {
             const cells = getColumnCells(this.tableData, 1, 'match');
-            this.selections = cells.map((cell) => cell.id);
+            this.tableComponent.updateSelections(cells.map((cell) => cell.id));
           }}
         >
           Column 1 Match
@@ -241,7 +214,7 @@ export class MyElement extends LitElement {
         <button
           @click=${() => {
             const cells = getRowCells(this.tableData, 1, 'inside');
-            this.selections = cells.map((cell) => cell.id);
+            this.tableComponent.updateSelections(cells.map((cell) => cell.id));
           }}
         >
           Row 1 Inside
@@ -250,7 +223,7 @@ export class MyElement extends LitElement {
         <button
           @click=${() => {
             const cells = getRowCells(this.tableData, 1, 'include');
-            this.selections = cells.map((cell) => cell.id);
+            this.tableComponent.updateSelections(cells.map((cell) => cell.id));
           }}
         >
           Row 1 Include
@@ -259,7 +232,7 @@ export class MyElement extends LitElement {
         <button
           @click=${() => {
             const cells = getRowCells(this.tableData, 1, 'match');
-            this.selections = cells.map((cell) => cell.id);
+            this.tableComponent.updateSelections(cells.map((cell) => cell.id));
           }}
         >
           Row 1 Match
@@ -295,48 +268,16 @@ export class MyElement extends LitElement {
         </button>
       </div>
 
-      <table-render
+      <table-component
         .data=${this.tableData}
         .contentRender=${this.renderChildren}
-        .selections=${this.selections}
         @selection-change=${(e: CustomEvent<string[]>) => {
           this.selections = e.detail;
         }}
-        @resize-column=${(e: CustomEvent<{ index: number; width: number }>) => {
-          const { index, width } = e.detail;
-          this.tableData = resizeColumn(this.tableData, index, width).tableData;
-          requestAnimationFrame(() => {
-            this.requestUpdate();
-          });
-        }}
-        @resize-row=${(e: CustomEvent<{ index: number; height: number }>) => {
-          const { index, height } = e.detail;
-          this.tableData = resizeRow(this.tableData, index, height).tableData;
-          requestAnimationFrame(() => {
-            this.requestUpdate();
-          });
-        }}
-      ></table-render>
+      ></table-component>
 
       <div style="margin-top: 10px">
-        Is Valid: ${isValidTableData(this.tableData)} ||| Selection Dom:
-        ${this.selections.length
-          ? this.formatDomRect(
-              cellsToDomRect(
-                getCellsFromId(this.tableData, this.selections),
-                this.tableRender,
-                'absolute'
-              )
-            ) +
-            '  ' +
-            this.formatDomRect(
-              cellsToDomRect(
-                getCellsFromId(this.tableData, this.selections),
-                this.tableRender,
-                'relative'
-              )
-            )
-          : 'None'}
+        Is Valid: ${isValidTableData(this.tableData)}
       </div>
     `;
   }
@@ -358,19 +299,6 @@ export class MyElement extends LitElement {
       font-family: inherit;
       cursor: pointer;
       transition: border-color 0.25s;
-    }
-
-    table {
-      font-family: arial, sans-serif;
-      border-collapse: collapse;
-      width: 100%;
-    }
-
-    td,
-    th {
-      border: 1px solid #dddddd;
-      text-align: left;
-      padding: 8px;
     }
 
     @media (prefers-color-scheme: light) {
