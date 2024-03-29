@@ -7,7 +7,6 @@ export const goTo = (
   direction: 'previous' | 'next' | 'up' | 'down'
 ): string | null => {
   if (selectedCells.length === 0) return null;
-  debugger;
   const range = getCellSumRange(selectedCells);
   const [x1, y1, x2, y2] = range;
 
@@ -43,7 +42,6 @@ export const goTo = (
     case 'next': {
       let targetX1 = x2;
       let targetY1 = y1;
-      debugger;
       if (x2 === tableData.columns.length) {
         if (y2 === tableData.rows.length) {
           targetX1 = tableData.columns.length - 1;
