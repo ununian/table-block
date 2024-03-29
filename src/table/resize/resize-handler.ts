@@ -1,6 +1,6 @@
 import { DisposableGroup } from '@blocksuite/global/utils';
 import { LitElement, TemplateResult, css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { TableResizeController } from './controller';
 
@@ -42,6 +42,9 @@ export class TableResizeHandler extends LitElement {
 
   @state()
   private translateY = 0;
+
+  @query('table-resize-handler')
+  private handler!: HTMLElement;
 
   connectedCallback() {
     super.connectedCallback();
@@ -113,7 +116,7 @@ export class TableResizeHandler extends LitElement {
   }
 
   render(): TemplateResult {
-    const style =
+    const style: Record<string, any> =
       this.mode === 'column'
         ? {
             top: 0,
@@ -131,6 +134,9 @@ export class TableResizeHandler extends LitElement {
             height: '3px',
             cursor: 'row-resize',
           };
+    if (this._isDragging) {
+      style.backgroundColor = '#e0a018';
+    }
 
     return html`<div
       class="table-resize-handler"
