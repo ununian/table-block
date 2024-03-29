@@ -1,11 +1,11 @@
 import { DisposableGroup, isEqual } from '@blocksuite/global/utils';
 import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { TableCellRenderFunction, TableData } from '../type';
-import { cellsToDomRect } from '../utils/dom';
-import { getCellsFromId } from '../utils/cell';
-import { TableComponent } from '../component';
 import { styleMap } from 'lit/directives/style-map.js';
+import { TableComponent } from '../component';
+import { TableData } from '../type';
+import { getCellsFromId } from '../utils/cell';
+import { cellsToDomRect } from '../utils/dom';
 
 @customElement('table-widget-example')
 export class TableWidgetExample extends LitElement {

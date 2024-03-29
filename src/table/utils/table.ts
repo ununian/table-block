@@ -5,6 +5,7 @@ import { nanoid } from 'nanoid';
 export const createTable = (
   rows: number,
   columns: number,
+  totalWidth: number,
   cellIdGenerator: (row: number, columns: number) => string = () => nanoid()
 ): TableData => {
   const table: TableData = {
@@ -16,7 +17,11 @@ export const createTable = (
     table.rows.push({ attrs: {} });
   }
   for (let i = 0; i < columns; i++) {
-    table.columns.push({ attrs: {} });
+    table.columns.push({
+      attrs: {
+        width: Math.floor(totalWidth / columns),
+      },
+    });
   }
 
   for (let i = 0; i < rows; i++) {

@@ -1,15 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, query, state } from 'lit/decorators.js';
 import { nanoid } from 'nanoid';
-import {
-  addColumn,
-  addRow,
-  goTo,
-  margeCell,
-  resizeColumn,
-  resizeRow,
-  splitCells,
-} from './table/command';
+import { addColumn, addRow, margeCell, splitCells } from './table/command';
 import {
   setCellsAttrs,
   toggleColumnHeader,
@@ -17,27 +9,26 @@ import {
 } from './table/command/attrs';
 import { removeColumn, removeRow } from './table/command/remove';
 import { getColumnCells, getRowCells } from './table/command/selection';
+import './table/component';
+import { TableComponent } from './table/component';
 import './table/render';
 import { TableCell, TableData } from './table/type';
 import { getCellsFromId } from './table/utils/cell';
 import { printTable } from './table/utils/print';
 import {
+  createTable,
   getVisibleColumnIndex,
   getVisibleRowIndex,
   isValidTableData,
 } from './table/utils/table';
-import { cellsToDomRect } from './table/utils/dom';
-import { TableRender } from './table/render';
-import './table/component';
-import { TableComponent } from './table/component';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
   columns: [
     { attrs: { width: 50 } },
     { attrs: { width: 100 } },
-    { attrs: {} },
-    { attrs: {} },
+    { attrs: { width: 100 } },
+    { attrs: { width: 100 } },
   ],
   cells: [
     {
@@ -100,6 +91,15 @@ export class MyElement extends LitElement {
 
   render() {
     return html`
+      <div style="margin-bottom: 20px">
+        <button
+          @click=${() => {
+            this.tableData = createTable(3, 4, 750, () => nanoid(5));
+          }}
+        >
+          Create
+        </button>
+      </div>
       <div style="margin-bottom: 20px">
         <button
           @click=${() => {
@@ -273,6 +273,9 @@ export class MyElement extends LitElement {
         .contentRender=${this.renderChildren}
         @selection-change=${(e: CustomEvent<string[]>) => {
           this.selections = e.detail;
+        }}
+        @data-change=${(e: CustomEvent<TableData>) => {
+          this.tableData = e.detail;
         }}
       ></table-component>
 

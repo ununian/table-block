@@ -1,11 +1,11 @@
+import { DisposableGroup } from '@blocksuite/global/utils';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { goTo, resizeColumn, resizeRow } from './command';
 import './render';
 import { TableRender } from './render';
-import { TableCell, TableCellRenderFunction, TableData } from './type';
+import { TableCellRenderFunction, TableData } from './type';
 import { getCellsFromId } from './utils/cell';
-import { DisposableGroup } from '@blocksuite/global/utils';
 import './widgets/example';
 @customElement('table-component')
 export class TableComponent extends LitElement {
