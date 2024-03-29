@@ -7,6 +7,8 @@ import { TableRender } from './render';
 import { TableCellRenderFunction, TableData } from './type';
 import { getCellsFromId } from './utils/cell';
 import './widgets/example';
+import './widgets/selectionRect';
+
 @customElement('table-component')
 export class TableComponent extends LitElement {
   private readonly disposeGroup = new DisposableGroup();
@@ -70,6 +72,9 @@ export class TableComponent extends LitElement {
         .selections=${this.selections}
         .tableComponent=${this}
       ></table-widget-example>
+      <table-widget-selection-rect
+        .tableComponent=${this}
+      ></table-widget-selection-rect>
     `;
   }
 

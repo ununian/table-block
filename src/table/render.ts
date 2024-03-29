@@ -18,8 +18,8 @@ export class TableRender extends LitElement {
   selections: string[] = [];
 
   private readonly disposeGroup = new DisposableGroup();
-  private selectionCtrl = new TableSelectionController(this);
-  private resizeCtrl = new TableResizeController(this);
+  public selectionCtrl = new TableSelectionController(this);
+  public resizeCtrl = new TableResizeController(this);
 
   static styles = css`
     :host {

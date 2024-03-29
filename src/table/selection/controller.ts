@@ -12,6 +12,7 @@ export class TableSelectionController {
   public slots = {
     cellClick: new Slot<string>(),
     selectionChange: new Slot<string[]>(),
+    selectionDomRectChange: new Slot<DOMRect | null>(),
   };
 
   public constructor(public readonly tableRender: TableRender) {}
@@ -40,13 +41,13 @@ export class TableSelectionController {
     );
 
     this.disposeGroup.addFromEvent(
-      this.tableRender,
+      document,
       'pointermove',
       this.onPointerMove.bind(this)
     );
 
     this.disposeGroup.addFromEvent(
-      this.tableRender,
+      document,
       'pointerup',
       this.onPointerUp.bind(this)
     );
@@ -56,12 +57,15 @@ export class TableSelectionController {
 
   private _isPointerDown = false;
   private _cellOnPointerDown: string | null = null;
+  private _startPointer: [number, number] | null = null;
   private onPointerDown(e: MouseEvent) {
     this.setSelection([]);
 
     const [targetCell, isInPadding] = this.getPointCell(e.clientX, e.clientY);
-
     if (!targetCell) return;
+
+    this._startPointer = [e.clientX, e.clientY];
+    this.slots.selectionDomRectChange.emit(null);
 
     this._cellOnPointerDown = targetCell.getAttribute('data-cell-id')!;
     this._isPointerDown = true;
@@ -81,6 +85,22 @@ export class TableSelectionController {
   private _lastSelection = [] as string[];
   private onPointerMove(e: MouseEvent) {
     if (!this._isPointerDown) return;
+    const tableRect = this.tableRender.getBoundingClientRect();
+
+    if (this._startPointer) {
+      const [startX, startY] = this._startPointer;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      const selectionDomRect = new DOMRect(
+        Math.min(startX, e.clientX) - tableRect.left,
+        Math.min(startY, e.clientY) - tableRect.top,
+        Math.abs(dx),
+        Math.abs(dy)
+      );
+
+      this.slots.selectionDomRectChange.emit(selectionDomRect);
+    }
 
     const [targetCell, isInPadding] = this.getPointCell(e.clientX, e.clientY);
 
@@ -110,7 +130,9 @@ export class TableSelectionController {
   private onPointerUp(e: MouseEvent) {
     if (!this._isPointerDown) return;
 
+    this._startPointer = null;
     this._isPointerDown = false;
+    this.slots.selectionDomRectChange.emit(null);
 
     const [targetCell] = this.getPointCell(e.clientX, e.clientY);
     if (!targetCell) return;
