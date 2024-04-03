@@ -131,8 +131,6 @@ export const removeRow = (
   tableData: TableData,
   rowIndex: number
 ): TableChangedResult => {
-  console.log('🚀 ~ result.tableData:', tableData);
-
   const rowCells = getCellsMatchRange(tableData, [
     0,
     rowIndex,
