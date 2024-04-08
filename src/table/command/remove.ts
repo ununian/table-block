@@ -127,6 +127,26 @@ export const removeColumn = (
   return result;
 };
 
+export const removeColumnRange = (
+  tableData: TableData,
+  columnRange: [number, number]
+): TableChangedResult => {
+  const columnCells = getCellsMatchRange(tableData, [
+    columnRange[0],
+    0,
+    columnRange[1],
+    tableData.rows.length,
+  ]);
+
+  const result = removeCells(tableData, columnCells);
+
+  result.tableData.columns = tableData.columns.filter(
+    (_, index) => index < columnRange[0] || index > columnRange[1]
+  );
+
+  return result;
+};
+
 export const removeRow = (
   tableData: TableData,
   rowIndex: number
@@ -142,6 +162,26 @@ export const removeRow = (
 
   result.tableData.rows = tableData.rows.filter(
     (_, index) => index !== rowIndex
+  );
+
+  return result;
+};
+
+export const removeRowRange = (
+  tableData: TableData,
+  rowRange: [number, number]
+): TableChangedResult => {
+  const rowCells = getCellsMatchRange(tableData, [
+    0,
+    rowRange[0],
+    tableData.columns.length,
+    rowRange[1],
+  ]);
+
+  const result = removeCells(tableData, rowCells);
+
+  result.tableData.rows = tableData.rows.filter(
+    (_, index) => index < rowRange[0] || index > rowRange[1]
   );
 
   return result;

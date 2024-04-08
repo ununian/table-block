@@ -1,5 +1,6 @@
 import { CellPosition, TableCell, TableData } from '../type';
 import {
+  getCellSumRange,
   getCellsIncludeRange,
   getCellsInsideRange,
   getCellsMatchRange,
@@ -67,6 +68,67 @@ export const getRowCells = (
   ]);
 };
 
+export const getColumnRangeCells = (
+  tableData: TableData,
+  columnRange: [number, number],
+  mode: 'include' | 'inside' | 'match' = 'inside'
+): TableCell[] => {
+  if (mode === 'include') {
+    return getCellsIncludeRange(tableData, [
+      columnRange[0],
+      0,
+      columnRange[1],
+      tableData.rows.length,
+    ]);
+  }
+
+  if (mode === 'match') {
+    return getCellsMatchRange(tableData, [
+      columnRange[0],
+      0,
+      columnRange[1],
+      tableData.rows.length + 1,
+    ]);
+  }
+  return getCellsInsideRange(tableData, [
+    columnRange[0],
+    0,
+    columnRange[1],
+    tableData.rows.length + 1,
+  ]);
+};
+
+export const getRowRangeCells = (
+  tableData: TableData,
+  rowRange: [number, number],
+  mode: 'include' | 'inside' | 'match' = 'inside'
+): TableCell[] => {
+  if (mode === 'include') {
+    return getCellsIncludeRange(tableData, [
+      0,
+      rowRange[0],
+      tableData.columns.length + 1,
+      rowRange[1],
+    ]);
+  }
+
+  if (mode === 'match') {
+    return getCellsMatchRange(tableData, [
+      0,
+      rowRange[0],
+      tableData.columns.length + 1,
+      rowRange[1],
+    ]);
+  }
+
+  return getCellsInsideRange(tableData, [
+    0,
+    rowRange[0],
+    tableData.columns.length + 1,
+    rowRange[1],
+  ]);
+};
+
 export const isSelectionWholeTable = (
   tableData: TableData,
   range: CellPosition
@@ -80,22 +142,29 @@ export const isSelectionWholeTable = (
   );
 };
 
-export const getIndexIfCellSameColumn = (
+export const getIndexRangeIfCellSameColumn = (
   tableData: TableData,
   cells: TableCell[],
   mode: 'include' | 'inside' | 'match' = 'inside'
 ) => {
-  const columnIndex = cells[0].pos[0];
-  const columnCells = getColumnCells(tableData, columnIndex, mode);
-  return isCellsEqual(columnCells, cells) ? columnIndex : -1;
+  const range = getCellSumRange(cells);
+  console.log('🚀 ~ range:', range);
+  const columnCells = getColumnRangeCells(
+    tableData,
+    [range[0], range[2]],
+    mode
+  );
+  console.log('🚀 ~ columnCells:', columnCells);
+  return isCellsEqual(columnCells, cells) ? [range[0], range[2]] : [];
 };
 
-export const getIndexIfCellSameRow = (
+export const getIndexRangeIfCellSameRow = (
   tableData: TableData,
   cells: TableCell[],
   mode: 'include' | 'inside' | 'match' = 'inside'
 ) => {
-  const rowIndex = cells[0].pos[1];
-  const rowCells = getRowCells(tableData, rowIndex, mode);
-  return isCellsEqual(rowCells, cells) ? rowIndex : -1;
+  const range = getCellSumRange(cells);
+  const rowCells = getRowRangeCells(tableData, [range[1], range[3]], mode);
+
+  return isCellsEqual(rowCells, cells) ? [range[1], range[3]] : [];
 };

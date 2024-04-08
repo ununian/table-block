@@ -10,8 +10,8 @@ import {
 import { removeColumn, removeRow } from './table/command/remove';
 import {
   getColumnCells,
-  getIndexIfCellSameColumn,
-  getIndexIfCellSameRow,
+  getIndexRangeIfCellSameColumn,
+  getIndexRangeIfCellSameRow,
   getRowCells,
   isSelectionWholeTable,
 } from './table/command/selection';
@@ -68,8 +68,6 @@ const table: TableData = {
   ],
 };
 
-console.log(printTable(table, 2));
-
 /**
  * An example element.
  *
@@ -106,9 +104,9 @@ export class MyElement extends LitElement {
     for (const m of mode) {
       const index =
         type === 'row'
-          ? getIndexIfCellSameRow(this.tableData, cells, m)
-          : getIndexIfCellSameColumn(this.tableData, cells, m);
-      if (index !== -1) {
+          ? getIndexRangeIfCellSameRow(this.tableData, cells, m)
+          : getIndexRangeIfCellSameColumn(this.tableData, cells, m);
+      if (index.length) {
         return `选中了整${type === 'row' ? '行' : '列'}: ${index}，模式: ${m}`;
       }
     }
