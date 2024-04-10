@@ -33,6 +33,7 @@ import {
   getColumnAllowDragTarget,
   getRowAllowDragTarget,
 } from './table/command/drag';
+import { repeat } from 'lit/directives/repeat.js';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
@@ -349,18 +350,22 @@ export class MyElement extends LitElement {
           ? html`
               列${selectionColumns}
               可以拖动到下面列（坐标系）：${columnsAllowTarget.join(',')}
-              <button
-                @click=${() => {
-                  const result = dragColumnRangeTo(
-                    this.tableData,
-                    selectionColumns,
-                    columnsAllowTarget[1]
-                  );
-                  this.tableData = result.tableData;
-                }}
-              >
-                移动 ${selectionColumns!} 到 ${columnsAllowTarget[1]}
-              </button>
+              ${repeat(
+                columnsAllowTarget,
+                (index) => index,
+                (index) => html` <button
+                  @click=${() => {
+                    const result = dragColumnRangeTo(
+                      this.tableData,
+                      selectionColumns,
+                      index
+                    );
+                    this.tableData = result.tableData;
+                  }}
+                >
+                  移动到 ${index}
+                </button>`
+              )}
             `
           : nothing}
       </div>
@@ -370,18 +375,22 @@ export class MyElement extends LitElement {
           ? html`
               行${selectionRows}
               可以拖动到下面行（坐标系）：${rowsAllowTarget.join(',')}
-              <button
-                @click=${() => {
-                  const result = dragRowRangeTo(
-                    this.tableData,
-                    selectionRows,
-                    rowsAllowTarget[1]
-                  );
-                  this.tableData = result.tableData;
-                }}
-              >
-                移动 ${selectionRows} 到 ${rowsAllowTarget[1]}
-              </button>
+              ${repeat(
+                rowsAllowTarget,
+                (index) => index,
+                (index) => html` <button
+                  @click=${() => {
+                    const result = dragRowRangeTo(
+                      this.tableData,
+                      selectionRows,
+                      index
+                    );
+                    this.tableData = result.tableData;
+                  }}
+                >
+                  移动到 ${index}
+                </button>`
+              )}
             `
           : nothing}
       </div>
