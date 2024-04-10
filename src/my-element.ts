@@ -20,7 +20,6 @@ import { TableComponent } from './table/component';
 import './table/render';
 import { TableCell, TableData } from './table/type';
 import { getCellSumRange, getCellsFromId } from './table/utils/cell';
-import { printTable } from './table/utils/print';
 import {
   createTable,
   getVisibleColumnIndex,

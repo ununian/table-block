@@ -1,11 +1,4 @@
-import { CellPosition, TableCell, TableData } from '../type';
-import {
-  getCellSumRange,
-  getCellsIncludeRange,
-  getCellsInsideRange,
-  getCellsMatchRange,
-  isCellsEqual,
-} from '../utils/cell';
+import { TableCell, TableData } from '../type';
 import { toResult } from '../utils/result';
 
 // 这里 columnRange 没有考虑自身内部有合并单元格的情况，需要外部用 Match 获取实际需要操作的列
