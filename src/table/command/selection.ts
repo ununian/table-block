@@ -146,25 +146,23 @@ export const getIndexRangeIfCellSameColumn = (
   tableData: TableData,
   cells: TableCell[],
   mode: 'include' | 'inside' | 'match' = 'inside'
-) => {
+): [number, number] | null => {
   const range = getCellSumRange(cells);
-  console.log('🚀 ~ range:', range);
   const columnCells = getColumnRangeCells(
     tableData,
     [range[0], range[2]],
     mode
   );
-  console.log('🚀 ~ columnCells:', columnCells);
-  return isCellsEqual(columnCells, cells) ? [range[0], range[2]] : [];
+  return isCellsEqual(columnCells, cells) ? [range[0], range[2]] : null;
 };
 
 export const getIndexRangeIfCellSameRow = (
   tableData: TableData,
   cells: TableCell[],
   mode: 'include' | 'inside' | 'match' = 'inside'
-) => {
+): [number, number] | null => {
   const range = getCellSumRange(cells);
   const rowCells = getRowRangeCells(tableData, [range[1], range[3]], mode);
 
-  return isCellsEqual(rowCells, cells) ? [range[1], range[3]] : [];
+  return isCellsEqual(rowCells, cells) ? [range[1], range[3]] : null;
 };

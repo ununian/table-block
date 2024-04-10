@@ -1,4 +1,4 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html, nothing } from 'lit';
 import { customElement, query, state } from 'lit/decorators.js';
 import { nanoid } from 'nanoid';
 import { addColumn, addRow, margeCell, splitCells } from './table/command';
@@ -27,6 +27,12 @@ import {
   getVisibleRowIndex,
   isValidTableData,
 } from './table/utils/table';
+import {
+  dragColumnRangeTo,
+  dragRowRangeTo,
+  getColumnAllowDragTarget,
+  getRowAllowDragTarget,
+} from './table/command/drag';
 
 const table: TableData = {
   rows: [{ attrs: { isHeader: true } }, {}, {}],
@@ -93,7 +99,7 @@ export class MyElement extends LitElement {
     super.connectedCallback();
   }
 
-  getSelectionRowOrColumnIndex(type: 'row' | 'column') {
+  getSelectionRowOrColumnIndexText(type: 'row' | 'column') {
     if (this.selections.length === 0) {
       return '';
     }
@@ -106,13 +112,37 @@ export class MyElement extends LitElement {
         type === 'row'
           ? getIndexRangeIfCellSameRow(this.tableData, cells, m)
           : getIndexRangeIfCellSameColumn(this.tableData, cells, m);
-      if (index.length) {
+      if (index?.length) {
         return `选中了整${type === 'row' ? '行' : '列'}: ${index}，模式: ${m}`;
       }
     }
   }
 
+  getMatchSelectionRowOrColumnRange(
+    type: 'row' | 'column'
+  ): null | [number, number] {
+    if (this.selections.length === 0) {
+      return null;
+    }
+
+    const cells = getCellsFromId(this.tableData, this.selections);
+
+    return type === 'row'
+      ? getIndexRangeIfCellSameRow(this.tableData, cells, 'match')
+      : getIndexRangeIfCellSameColumn(this.tableData, cells, 'match');
+  }
+
   render() {
+    const selectionColumns = this.getMatchSelectionRowOrColumnRange('column');
+    const columnsAllowTarget = selectionColumns
+      ? getColumnAllowDragTarget(this.tableData, selectionColumns)
+      : [];
+
+    const selectionRows = this.getMatchSelectionRowOrColumnRange('row');
+    const rowsAllowTarget = selectionRows
+      ? getRowAllowDragTarget(this.tableData, selectionRows)
+      : [];
+
     return html`
       <div style="margin-bottom: 20px">
         <button
@@ -304,14 +334,56 @@ export class MyElement extends LitElement {
 
       <div style="margin-top: 10px">
         Is Valid: ${isValidTableData(this.tableData)} <br />
-        ${this.getSelectionRowOrColumnIndex('row')} <br />
-        ${this.getSelectionRowOrColumnIndex('column')} <br />
+        ${this.getSelectionRowOrColumnIndexText('row')} <br />
+        ${this.getSelectionRowOrColumnIndexText('column')} <br />
         ${isSelectionWholeTable(
           this.tableData,
           getCellSumRange(getCellsFromId(this.tableData, this.selections))
         )
           ? '选中了整个表格'
           : ''} <br />
+      </div>
+
+      <div style="margin-top: 10px">
+        ${selectionColumns && columnsAllowTarget.length > 0
+          ? html`
+              列${selectionColumns}
+              可以拖动到下面列（坐标系）：${columnsAllowTarget.join(',')}
+              <button
+                @click=${() => {
+                  const result = dragColumnRangeTo(
+                    this.tableData,
+                    selectionColumns,
+                    columnsAllowTarget[1]
+                  );
+                  this.tableData = result.tableData;
+                }}
+              >
+                移动 ${selectionColumns!} 到 ${columnsAllowTarget[1]}
+              </button>
+            `
+          : nothing}
+      </div>
+
+      <div style="margin-top: 10px">
+        ${selectionRows && rowsAllowTarget.length > 0
+          ? html`
+              行${selectionRows}
+              可以拖动到下面行（坐标系）：${rowsAllowTarget.join(',')}
+              <button
+                @click=${() => {
+                  const result = dragRowRangeTo(
+                    this.tableData,
+                    selectionRows,
+                    rowsAllowTarget[1]
+                  );
+                  this.tableData = result.tableData;
+                }}
+              >
+                移动 ${selectionRows} 到 ${rowsAllowTarget[1]}
+              </button>
+            `
+          : nothing}
       </div>
     `;
   }
